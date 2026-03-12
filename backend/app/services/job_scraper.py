@@ -1,4 +1,6 @@
 import requests
+from app.core.database import SessionLocal
+from app.models.job import Job
 
 
 def scrape_jobs():
@@ -11,13 +13,25 @@ def scrape_jobs():
     response = requests.get(url, headers=headers)
     data = response.json()
 
-    jobs = []
+    db = SessionLocal()
 
-    for job in data[1:6]:   # skip first metadata object
-        jobs.append({
-            "title": job.get("position"),
-            "company": job.get("company"),
-            "location": job.get("location"),
+    saved_jobs = []
+
+    for job in data[1:6]:
+        job_obj = Job(
+            title=job.get("position"),
+            company=job.get("company"),
+            url=job.get("url"),
+            status="new"
+        )
+
+        db.add(job_obj)
+        saved_jobs.append({
+            "title": job_obj.title,
+            "company": job_obj.company
         })
 
-    return jobs
+    db.commit()
+    db.close()
+
+    return saved_jobs
