@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from app.api.routes import router
 from app.core.database import Base, engine
 from app.models import job
+from app.scheduler.scheduler import start_scheduler
 
 app = FastAPI()
+
+start_scheduler()
 
 Base.metadata.create_all(bind=engine)
 
