@@ -3,6 +3,8 @@ from app.services.job_scraper import scrape_jobs
 from app.core.database import SessionLocal
 from app.models.job import Job
 from pydantic import BaseModel
+from fastapi import Query
+from app.services.job_filter import filter_jobs
 
 router = APIRouter()
 
@@ -51,3 +53,10 @@ def update_job_status(job_id: int, payload: StatusUpdate):
     db.close()
 
     return {"message": "Status updated", "job_id": job_id, "status": payload.status}
+
+@router.get("/jobs/filter")
+def filter_jobs_endpoint(keyword: str = Query(...)):
+
+    jobs = scrape_jobs()
+
+    return filter_jobs(jobs, keyword)
