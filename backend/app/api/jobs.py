@@ -2,9 +2,9 @@ from fastapi import APIRouter
 from app.services.job_scraper import scrape_jobs
 from app.core.database import SessionLocal
 from app.models.job import Job
+from pydantic import BaseModel
 
 router = APIRouter()
-
 
 @router.get("/jobs")
 def run_scraper():
@@ -30,3 +30,24 @@ def get_jobs_from_db():
     db.close()
 
     return result
+
+class StatusUpdate(BaseModel):
+    status: str
+
+
+@router.put("/jobs/{job_id}/status")
+def update_job_status(job_id: int, payload: StatusUpdate):
+
+    db = SessionLocal()
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        return {"error": "Job not found"}
+
+    job.status = payload.status
+
+    db.commit()
+    db.close()
+
+    return {"message": "Status updated", "job_id": job_id, "status": payload.status}
