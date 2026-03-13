@@ -5,6 +5,7 @@ from app.models.job import Job
 from pydantic import BaseModel
 from fastapi import Query
 from app.services.job_filter import filter_jobs
+from app.services.email_generator import generate_email
 
 router = APIRouter()
 
@@ -60,3 +61,19 @@ def filter_jobs_endpoint(keyword: str = Query(...)):
     jobs = scrape_jobs()
 
     return filter_jobs(jobs, keyword)
+
+@router.get("/jobs/email/{job_id}")
+def generate_job_email(job_id: int):
+
+    db = SessionLocal()
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        return {"error": "Job not found"}
+
+    email = generate_email(job)
+
+    db.close()
+
+    return email
