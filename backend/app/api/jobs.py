@@ -7,6 +7,7 @@ from fastapi import Query
 from app.services.job_filter import filter_jobs
 from app.services.email_generator import generate_email
 from app.services.resume_matcher import match_job
+from app.services.email_sender import send_email
 
 router = APIRouter()
 
@@ -90,6 +91,28 @@ def match_job_with_resume(job_id: int):
         return {"error": "Job not found"}
 
     result = match_job(job)
+
+    db.close()
+
+    return result
+
+@router.get("/jobs/send-email/{job_id}")
+def send_job_email(job_id: int):
+
+    db = SessionLocal()
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        return {"error": "Job not found"}
+
+    email_data = generate_email(job)
+
+    result = send_email(
+        "recruiter@example.com",
+        email_data["subject"],
+        email_data["body"]
+    )
 
     db.close()
 
