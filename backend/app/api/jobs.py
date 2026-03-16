@@ -8,6 +8,7 @@ from app.services.job_filter import filter_jobs
 from app.services.email_generator import generate_email
 from app.services.resume_matcher import match_job
 from app.services.email_sender import send_email
+from app.services.job_scorer import score_job
 
 router = APIRouter()
 
@@ -113,6 +114,22 @@ def send_job_email(job_id: int):
         email_data["subject"],
         email_data["body"]
     )
+
+    db.close()
+
+    return result
+
+@router.get("/jobs/score/{job_id}")
+def score_job_endpoint(job_id: int):
+
+    db = SessionLocal()
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        return {"error": "Job not found"}
+
+    result = score_job(job)
 
     db.close()
 
