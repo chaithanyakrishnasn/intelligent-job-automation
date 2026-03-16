@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from fastapi import Query
 from app.services.job_filter import filter_jobs
 from app.services.email_generator import generate_email
+from app.services.resume_matcher import match_job
 
 router = APIRouter()
 
@@ -77,3 +78,19 @@ def generate_job_email(job_id: int):
     db.close()
 
     return email
+
+@router.get("/jobs/match/{job_id}")
+def match_job_with_resume(job_id: int):
+
+    db = SessionLocal()
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        return {"error": "Job not found"}
+
+    result = match_job(job)
+
+    db.close()
+
+    return result
