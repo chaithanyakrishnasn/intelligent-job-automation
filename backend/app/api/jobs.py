@@ -9,6 +9,7 @@ from app.services.email_generator import generate_email
 from app.services.resume_matcher import match_job
 from app.services.email_sender import send_email
 from app.services.job_scorer import score_job
+from app.services.job_recommender import recommend_jobs
 
 router = APIRouter()
 
@@ -134,3 +135,16 @@ def score_job_endpoint(job_id: int):
     db.close()
 
     return result
+
+@router.get("/jobs/recommendations")
+def get_job_recommendations():
+
+    db = SessionLocal()
+
+    jobs = db.query(Job).all()
+
+    recommendations = recommend_jobs(jobs)
+
+    db.close()
+
+    return recommendations
