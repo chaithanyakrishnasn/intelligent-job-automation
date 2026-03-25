@@ -13,6 +13,7 @@ from app.services.job_recommender import recommend_jobs
 from app.services.resume_parser import extract_skills
 from pydantic import BaseModel
 from app.services.resume_parser import extract_skills
+from fastapi import Query
 
 router = APIRouter()
 
@@ -168,18 +169,22 @@ class ResumeInput(BaseModel):
 
 
 @router.post("/jobs/recommendations")
-def get_recommendations(payload: ResumeInput):
+def get_recommendations(
+    payload: ResumeInput,
+    limit: int = Query(5),
+    min_score: int = Query(0)
+):
 
     skills = extract_skills(payload.text)
 
     db = SessionLocal()
     jobs = db.query(Job).all()
 
-    recommendations = recommend_jobs(jobs, skills)
+    recommendations = recommend_jobs(jobs, skills, limit, min_score)
 
     db.close()
 
     return {
-        "extracted_skills": skills,
+        "skills": skills,
         "recommendations": recommendations
     }
