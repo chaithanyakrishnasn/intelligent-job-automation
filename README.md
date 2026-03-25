@@ -1,195 +1,267 @@
-Intelligent Job Automation System
-An end-to-end AI-assisted job automation platform that combines:
-Python-based job scraping FastAPI backend REST APIs SQLAlchemy for database management Resume-based skill extraction Intelligent job matching and recommendation Automated email generation and sending APScheduler for periodic automation
+# Intelligent Job Automation System
 
-For the current demo:
-Job scraping fetches real-time job listings from RemoteOK API
-Database stores jobs with duplicate prevention
-Resume parsing extracts skills dynamically from user input
-Job matching compares extracted skills with job data
-Recommendation engine ranks jobs based on match score
-Email generator creates personalized job application emails
-Email sender sends applications via SMTP
-Scheduler automates periodic job scraping
+An end-to-end job automation platform that integrates job scraping, resume analysis, job matching, and automated email applications.
 
-Demo Architecture
-backend/
-├── app/
-│   ├── api/            # API routes (jobs, user, recommendations)
-│   ├── services/       # Business logic (scraper, matcher, scorer, email)
-│   ├── models/         # Database models (Job, User)
-│   ├── core/           # DB config
-│   └── main.py         # Entry point
-│
-├── scheduler/          # APScheduler automation
-├── requirements.txt
-└── .env
-1. Clone the repo
+---
+
+## Features
+
+- Python-based job scraping  
+- FastAPI backend with REST APIs  
+- SQLAlchemy ORM for database management  
+- Resume-based skill extraction  
+- Job matching and recommendation engine  
+- Email generation and SMTP-based sending  
+- APScheduler for automated periodic execution  
+
+---
+
+## Current Demo Capabilities
+
+- Fetch job listings from RemoteOK API  
+- Store jobs with duplicate prevention  
+- Extract skills from user resumes  
+- Match jobs based on skill relevance  
+- Rank jobs using scoring logic  
+- Track job application status  
+- Generate email drafts for applications  
+- Send emails via SMTP  
+- Automate scraping using scheduler  
+
+---
+
+## Project Architecture
+
+```
+app/
+├── api/          # FastAPI endpoints (jobs, recommendations, user profile)
+├── services/     # Business logic (scraper, matcher, scorer, email, parser)
+├── models/       # Database models (Job, User)
+├── core/         # Database configuration
+
+scheduler/
+└── scheduler.py  # APScheduler automation
+```
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/YOUR_USERNAME/intelligent-job-automation.git
 cd intelligent-job-automation/backend
-2. Setup Environment
-Create virtual environment:
+```
 
-python -m venv venv
-venv\Scripts\activate   (Windows)
+---
+
+### 2. Setup Environment
+
+Ensure you have:
+
+- Python 3 installed  
+- Virtual environment activated  
+
 Install dependencies:
 
+```bash
 pip install -r requirements.txt
-3. Run the Backend
+```
+
+---
+
+### 3. Run the Backend
+
+```bash
 uvicorn app.main:app --reload
-Access API:
+```
 
+Access API docs:
+
+```
 http://127.0.0.1:8000/docs
-4. Core Features
-Job Scraping
-Fetches jobs from RemoteOK API
+```
 
-Extracts title, company, location
+---
 
-Database Storage
-Stores jobs using SQLAlchemy
+## Core Features Breakdown
 
-Prevents duplicate entries
+- Job scraping retrieves job listings from API  
+- Database stores jobs with deduplication logic  
+- Resume parsing extracts skills dynamically  
+- Job matching compares skills with job titles  
+- Scoring system generates match percentage  
+- Recommendation engine ranks jobs by relevance  
+- Application tracking updates job lifecycle status  
+- Email generator creates application templates  
+- SMTP integration sends application emails  
+- Scheduler automates periodic scraping  
 
-Resume Skill Extraction
-Parses resume text
+---
 
-Extracts skills using keyword matching
+## API Endpoints
 
-Job Matching & Scoring
-Matches jobs with extracted skills
+### Job APIs
 
-Generates match score (0–100%)
+- `GET /jobs`
+- `GET /jobs/db`
+- `PUT /jobs/{id}/status`
+- `GET /jobs/filter`
 
-Recommendation Engine
-Returns top N jobs sorted by relevance
+### Recommendation APIs
 
-Supports filtering by minimum score
+- `POST /jobs/recommendations`
+- `GET /jobs/recommendations/{user_id}`
 
-Application Tracking
-Tracks job status (new, applied, interview, etc.)
+### Resume & User APIs
 
-Email Automation
-Generates job application emails
+- `POST /resume/skills`
+- `POST /user/profile`
 
-Sends emails using SMTP
+### Email APIs
 
-Scheduler Automation
-Automatically scrapes jobs periodically using APScheduler
+- `GET /jobs/email/{id}`
+- `GET /jobs/send-email/{id}`
 
-5. API Endpoints
-Job APIs
-GET /jobs                    → Run scraper
-GET /jobs/db                → Get stored jobs
-PUT /jobs/{id}/status       → Update job status
-GET /jobs/filter            → Filter jobs by keyword
-Recommendation APIs
-POST /jobs/recommendations
-GET /jobs/recommendations/{user_id}
-Resume & User APIs
-POST /resume/skills         → Extract skills
-POST /user/profile          → Create user profile
-Email APIs
-GET /jobs/email/{id}        → Generate email
-GET /jobs/send-email/{id}   → Send email
-6. Example Flow
-Create user profile with resume:
+---
 
+## Example Workflow
+
+### 1. Create User Profile
+
+```json
 POST /user/profile
-Run job scraper:
-
-GET /jobs
-Get recommendations:
-
-GET /jobs/recommendations/{user_id}
-Generate email:
-
-GET /jobs/email/{job_id}
-Send application:
-
-GET /jobs/send-email/{job_id}
-7. Example Output
 {
-  "user": "Krishna",
-  "skills": ["python", "fastapi", "sql"],
-  "recommendations": [
-    {
-      "job_title": "Backend Engineer",
-      "company": "XYZ",
-      "match_score": 75
-    }
-  ]
+  "name": "Krishna",
+  "text": "Python FastAPI backend SQL Docker"
 }
-8. Full Demo Flow
-Run scraper manually or via scheduler
+```
 
-System will:
+---
 
-Fetch job listings
+### 2. Run Job Scraper
 
-Store jobs in database
+```
+GET /jobs
+```
 
-Extract resume skills
+---
 
-Score jobs based on skills
+### 3. Get Recommendations
 
-Rank and recommend jobs
+```
+GET /jobs/recommendations/{user_id}
+```
 
-Generate application emails
+---
 
-Send emails automatically
+### 4. Generate Email
 
-9. What is Real vs Heuristic
-Real in current system:
-Job scraping (API-based)
+```
+GET /jobs/email/{job_id}
+```
 
-Database storage and deduplication
+---
 
-Resume skill extraction
+### 5. Send Application
 
-Email generation and sending
+```
+GET /jobs/send-email/{job_id}
+```
 
-Scheduler automation
+---
 
-REST API architecture
+## Example Output
 
-Heuristic:
-Skill matching (keyword-based)
+```json
+[
+  {
+    "job_title": "Backend Engineer",
+    "company": "XYZ",
+    "match_score": 75
+  }
+]
+```
 
-Scoring logic (simple ratio)
+---
 
-Limited job data (title-based matching)
+## Full Demo Flow
 
-10. Technologies Used
-Python
+The system can run manually or via scheduler:
 
-FastAPI
+1. Fetch job listings  
+2. Store jobs in database  
+3. Extract resume skills  
+4. Evaluate job relevance  
+5. Rank jobs based on score  
+6. Generate application emails  
+7. Send emails automatically  
 
-SQLAlchemy
+---
 
-SQLite / PostgreSQL
+## Real vs Heuristic Components
 
-APScheduler
+### Real Implementations
 
-SMTP (Email)
+- Job scraping via API  
+- Database storage and deduplication  
+- Resume skill extraction  
+- Email generation and sending  
+- Scheduler automation  
+- REST API architecture  
 
-REST APIs
+### Heuristic Components
 
-11. Future Enhancements
-NLP-based resume parsing
+- Keyword-based matching  
+- Basic scoring logic  
+- Title-based job evaluation  
 
-Job description-based matching
+---
 
-Machine learning recommendation engine
+## Best Demo Mode
 
-Frontend dashboard (React)
+For the best demonstration:
 
-Multi-user authentication
+- Input resume with backend-related skills  
+- Run scraper to populate jobs  
+- Generate recommendations  
+- Update job status  
+- Generate and send email  
+- Demonstrate automated scheduling  
 
-Deployment with Docker & AWS
+---
 
-Summary
-This project demonstrates a full-stack backend automation system that integrates:
+## Technologies Used
 
-Data ingestion → Processing → Intelligence → Automation
-and simulates a real-world job recommendation and application assistant.
+- Python  
+- FastAPI  
+- SQLAlchemy  
+- SQLite / PostgreSQL  
+- APScheduler  
+- SMTP  
+- REST APIs  
+
+---
+
+## Future Enhancements
+
+- NLP-based resume parsing  
+- Job description-based matching  
+- Machine learning recommendation engine  
+- Frontend dashboard  
+- User authentication system  
+- Docker deployment  
+- Cloud hosting  
+
+---
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss proposed updates.
+
+---
+
+## Support
+
+If you found this project useful, consider giving it a star on GitHub.
