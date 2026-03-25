@@ -1,4 +1,4 @@
-skills = ["python", "fastapi", "backend", "api", "sql", "docker"]
+skills = ["python", "fastapi", "backend", "api", "sql", "docker", "Docker", "kubernetes", "aws", "azure", "gcp", "cloud", "devops", "ci/cd", "git", "github", "gitlab"]
 
 
 def score_job(job):
