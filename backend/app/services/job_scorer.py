@@ -1,20 +1,18 @@
 skills = ["python", "fastapi", "backend", "api", "sql", "docker", "Docker", "kubernetes", "aws", "azure", "gcp", "cloud", "devops", "ci/cd", "git", "github", "gitlab"]
 
 
+
 def score_job(job, skills):
 
-    title = job.title.lower()
+    text = f"{job.title} {job.company}".lower()
 
     matched = []
 
     for skill in skills:
-        if skill in title:
+        if skill in text:
             matched.append(skill)
 
-    if len(skills) == 0:
-        score = 0
-    else:
-        score = int((len(matched) / len(skills)) * 100)
+    score = int((len(matched) / len(skills)) * 100) if skills else 0
 
     return {
         "job_title": job.title,
