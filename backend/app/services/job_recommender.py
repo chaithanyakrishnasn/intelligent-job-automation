@@ -1,12 +1,12 @@
 from app.services.job_scorer import score_job
 
 
-def recommend_jobs(jobs):
+def recommend_jobs(jobs, skills):
 
     scored_jobs = []
 
     for job in jobs:
-        result = score_job(job)
+        result = score_job(job, skills)
 
         scored_jobs.append({
             "job_title": job.title,

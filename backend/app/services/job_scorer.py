@@ -1,7 +1,7 @@
 skills = ["python", "fastapi", "backend", "api", "sql", "docker", "Docker", "kubernetes", "aws", "azure", "gcp", "cloud", "devops", "ci/cd", "git", "github", "gitlab"]
 
 
-def score_job(job):
+def score_job(job, skills):
 
     title = job.title.lower()
 
@@ -11,7 +11,10 @@ def score_job(job):
         if skill in title:
             matched.append(skill)
 
-    score = int((len(matched) / len(skills)) * 100)
+    if len(skills) == 0:
+        score = 0
+    else:
+        score = int((len(matched) / len(skills)) * 100)
 
     return {
         "job_title": job.title,
