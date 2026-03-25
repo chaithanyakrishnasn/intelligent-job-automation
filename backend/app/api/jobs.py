@@ -10,6 +10,8 @@ from app.services.resume_matcher import match_job
 from app.services.email_sender import send_email
 from app.services.job_scorer import score_job
 from app.services.job_recommender import recommend_jobs
+from app.services.resume_parser import extract_skills
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -148,3 +150,14 @@ def get_job_recommendations():
     db.close()
 
     return recommendations
+
+class ResumeInput(BaseModel):
+    text: str
+
+
+@router.post("/resume/skills")
+def get_resume_skills(payload: ResumeInput):
+
+    skills = extract_skills(payload.text)
+
+    return {"skills": skills}
